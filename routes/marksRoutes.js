@@ -1,0 +1,81 @@
+import express from "express";
+import db from "../connection.js";
+
+const router = express.Router();
+
+// delete marks record API 
+
+// ✅ DELETE: Delete a marks record by ID
+router.delete("/delete/:id", (req, res) => {
+  const { id } = req.params;
+
+  const sql = "DELETE FROM marks WHERE id = ?";
+  db.query(sql, [id], (err, result) => {
+    if (err) {
+      console.error("Error deleting record:", err);
+      return res.status(500).json({ message: "Database error" });
+    }
+
+    if (result.affectedRows === 0) {
+      return res.status(404).json({ message: "Record not found" });
+    }
+
+    res.status(200).json({ message: "Record deleted successfully ✅" });
+  });
+});
+
+
+// student view marks 
+
+router.get("/student", (req, res) => {
+  const { rollNo, name } = req.query;
+
+  if (!rollNo || !name) {
+    return res.status(400).json({ message: "Roll No and Name are required" });
+  }
+
+  const sql = "SELECT * FROM marks WHERE rollNo = ? AND name = ?";
+  db.query(sql, [rollNo, name], (err, results) => {
+    if (err) {
+      console.error("Error fetching student marks:", err);
+      return res.status(500).json({ message: "Database error" });
+    }
+
+    if (results.length === 0) {
+      return res.status(404).json({ message: "Result not found" });
+    }
+
+    res.json(results[0]); // single record return karega
+  });
+});
+
+// ✅ POST: Add marks for a student
+router.post("/add", (req, res) => {
+  const { rollNo, name, subject, marks } = req.body;
+
+  if (!rollNo || !name || !subject || !marks) {
+    return res.status(400).json({ message: "All fields are required" });
+  }
+
+  const sql = "INSERT INTO marks (rollNo, name, subject, marks) VALUES (?, ?, ?, ?)";
+  db.query(sql, [rollNo, name, subject, marks], (err, result) => {
+    if (err) {
+      console.error("Error inserting marks:", err);
+      return res.status(500).json({ message: "Database error" });
+    }
+    res.status(200).json({ message: "Marks added successfully ✅" });
+  });
+});
+
+// ✅ GET: View all marks
+router.get("/", (req, res) => {
+  db.query("SELECT * FROM marks", (err, results) => {
+    if (err) {
+      console.error("Error fetching marks:", err);
+      return res.status(500).json({ message: "Database error" });
+    }
+    res.json(results);
+  });
+});
+
+export default router;

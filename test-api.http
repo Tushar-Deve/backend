@@ -1,0 +1,9 @@
+POST http://localhost:5000/api/marks/add
+Content-Type: application/json
+
+{
+  "rollNo": 1,
+  "name": "Tushar",
+  "subject": "Maths",
+  "marks": 90
+}
