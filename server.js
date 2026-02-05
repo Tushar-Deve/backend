@@ -4,6 +4,8 @@ import dotenv from "dotenv";
 import facultyRoutes from "./routes/facultyRoutes.js";
 import studentRoutes from "./routes/studentRoutes.js";
 import marksRoutes from "./routes/marksRoutes.js";
+import db from "./connection.js";
+
 
 dotenv.config();
 const app = express();
