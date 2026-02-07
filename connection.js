@@ -1,36 +1,25 @@
 import mysql from "mysql2";
 import dotenv from "dotenv";
+
 dotenv.config();
 
-// const db = mysql.createConnection({
-//   host: process.env.MYSQL_HOST,
-//   user: process.env.MYSQL_USER,
-//   password: process.env.MYSQL_PASSWORD,
-//   database: process.env.MYSQL_DATABASE,
-//   port: process.env.MYSQL_PORT
-// });
-
-// const db = mysql.createConnection({
-//   host: process.env.DB_HOST,
-//   user: process.env.DB_USER,
-//   password: process.env.DB_PASSWORD,
-//   database: process.env.DB_NAME,
-//   port: process.env.DB_PORT
-// });
-
-const db = mysql.createConnection({
+const db = mysql.createPool({
   host: process.env.MYSQLHOST,
   user: process.env.MYSQLUSER,
   password: process.env.MYSQLPASSWORD,
   database: process.env.MYSQLDATABASE,
   port: process.env.MYSQLPORT,
+  waitForConnections: true,
+  connectionLimit: 10,
+  queueLimit: 0
 });
 
-db.connect((err) => {
+db.getConnection((err, connection) => {
   if (err) {
-    console.error("❌ Database connection failed:", err);
+    console.error("❌ DB pool connection failed:", err);
   } else {
-    console.log("✅ Connected to MySQL database");
+    console.log("✅ MySQL Pool connected successfully");
+    connection.release();
   }
 });
 
