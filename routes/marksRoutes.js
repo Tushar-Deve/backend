@@ -28,14 +28,14 @@ router.delete("/delete/:id", (req, res) => {
 // student view marks 
 
 router.get("/student", (req, res) => {
-  const { rollNo, name } = req.query;
+  const { roll_no, name } = req.query;
 
-  if (!rollNo || !name) {
+  if (!roll_no || !name) {
     return res.status(400).json({ message: "Roll No and Name are required" });
   }
 
-  const sql = "SELECT * FROM marks WHERE rollNo = ? AND name = ?";
-  db.query(sql, [rollNo, name], (err, results) => {
+  const sql = "SELECT * FROM marks WHERE roll_no = ? AND name = ?";
+  db.query(sql, [roll_no, name], (err, results) => {
     if (err) {
       console.error("Error fetching student marks:", err);
       return res.status(500).json({ message: "Database error" });
@@ -51,14 +51,14 @@ router.get("/student", (req, res) => {
 
 // ✅ POST: Add marks for a student
 router.post("/add", (req, res) => {
-  const { rollNo, name, subject, marks } = req.body;
+  const { roll_no, name, subject, marks } = req.body;
 
-  if (!rollNo || !name || !subject || !marks) {
+  if (!roll_no || !name || !subject || !marks) {
     return res.status(400).json({ message: "All fields are required" });
   }
 
-  const sql = "INSERT INTO marks (rollNo, name, subject, marks) VALUES (?, ?, ?, ?)";
-  db.query(sql, [rollNo, name, subject, marks], (err, result) => {
+  const sql = "INSERT INTO marks (rolo_no, name, subject, marks) VALUES (?, ?, ?, ?)";
+  db.query(sql, [roll_no, name, subject, marks], (err, result) => {
     if (err) {
       console.error("Error inserting marks:", err);
       return res.status(500).json({ message: "Database error" });
