@@ -115,18 +115,37 @@ router.get("/", (req, res) => {
   });
 });
 
-// ✅ DELETE: Delete a marks record by ID
-router.delete("/delete/:id", (req, res) => {
-  const { id } = req.params;
-  const sql = "DELETE FROM marks WHERE id = ?";
-  db.query(sql, [id], (err, result) => {
+// // ✅ DELETE: Delete a marks record by ID
+// router.delete("/delete/:id", (req, res) => {
+//   const { id } = req.params;
+//   const sql = "DELETE FROM marks WHERE id = ?";
+//   db.query(sql, [id], (err, result) => {
+//     if (err) {
+//       console.error("Error deleting record:", err);
+//       return res.status(500).json({ message: "Database error" });
+//     }
+//     if (result.affectedRows === 0) {
+//       return res.status(404).json({ message: "Record not found" });
+//     }
+//     res.status(200).json({ message: "Record deleted successfully ✅" });
+//   });
+// });
+
+// ✅ DELETE marks by roll_no
+router.delete("/delete/:roll_no", (req, res) => {
+  const { roll_no } = req.params;
+
+  const sql = "DELETE FROM marks WHERE roll_no = ?";
+  db.query(sql, [roll_no], (err, result) => {
     if (err) {
       console.error("Error deleting record:", err);
       return res.status(500).json({ message: "Database error" });
     }
+
     if (result.affectedRows === 0) {
       return res.status(404).json({ message: "Record not found" });
     }
+
     res.status(200).json({ message: "Record deleted successfully ✅" });
   });
 });
