@@ -148,7 +148,7 @@ router.get("/student", (req, res) => {
   }
 
   const sql =
-    "SELECT subject, marks FROM marks WHERE roll_no = ? AND name = ?";
+    "SELECT roll_no,name,subject, marks FROM marks WHERE roll_no = ? AND name = ?";
 
   db.query(sql, [roll_no, name], (err, results) => {
     if (err) {
