@@ -134,5 +134,36 @@ router.delete("/delete/:roll_no", (req, res) => {
   });
 });
 
+
+// ============================
+// STUDENT VIEW MARKS
+// ============================
+router.get("/student", (req, res) => {
+  const { roll_no, name } = req.query;
+
+  if (!roll_no || !name) {
+    return res
+      .status(400)
+      .json({ message: "roll_no and name required" });
+  }
+
+  const sql =
+    "SELECT subject, marks FROM marks WHERE roll_no = ? AND name = ?";
+
+  db.query(sql, [roll_no, name], (err, results) => {
+    if (err) {
+      console.error("Student marks fetch error:", err);
+      return res.status(500).json({ message: "Database error" });
+    }
+
+    if (results.length === 0) {
+      return res.status(404).json({ message: "Result not found" });
+    }
+
+    res.json(results);
+  });
+});
+
+
 export default router;
 
