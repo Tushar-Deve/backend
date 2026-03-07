@@ -64,6 +64,18 @@ const db = new sqlite3.Database("./database.db", (err) => {
         )
       `);
 
+      db.run(`
+  INSERT OR IGNORE INTO faculty (name, email, password)
+  VALUES
+    ('Seema Nandal', 'seemanandal@gmail.com', '12345')
+`);
+
+      db.run(`
+  INSERT OR IGNORE INTO students (roll_no, name, email, password)
+  VALUES
+    ('101', 'Tushar', 'tushar@gmail.com', '12321')
+`);
+
     });
   }
 });
