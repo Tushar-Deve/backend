@@ -26,15 +26,21 @@
 
 
 import sqlite3 from "sqlite3";
+import path from "path";
 
-const db = new sqlite3.Database("./database.db", (err) => {
+// Absolute path for database
+const dbPath = path.resolve("./database.db");
+
+const db = new sqlite3.Database(dbPath, (err) => {
   if (err) {
-    console.error("❌ SQLite connection failed:", err);
+    console.error("❌ SQLite connection failed:", err.message);
   } else {
-    console.log("✅ SQLite database connected");
+    console.log("✅ SQLite database connected at:", dbPath);
 
+    // Ensure tables exist
     db.serialize(() => {
 
+      // Faculty table
       db.run(`
         CREATE TABLE IF NOT EXISTS faculty (
           id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -42,8 +48,11 @@ const db = new sqlite3.Database("./database.db", (err) => {
           email TEXT UNIQUE,
           password TEXT
         )
-      `);
+      `, (err) => {
+        if(err) console.error("❌ Faculty table error:", err.message);
+      });
 
+      // Students table
       db.run(`
         CREATE TABLE IF NOT EXISTS students (
           id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -52,8 +61,11 @@ const db = new sqlite3.Database("./database.db", (err) => {
           email TEXT,
           password TEXT
         )
-      `);
+      `, (err) => {
+        if(err) console.error("❌ Students table error:", err.message);
+      });
 
+      // Marks table
       db.run(`
         CREATE TABLE IF NOT EXISTS marks (
           id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -62,19 +74,24 @@ const db = new sqlite3.Database("./database.db", (err) => {
           subject TEXT,
           marks INTEGER
         )
-      `);
+      `, (err) => {
+        if(err) console.error("❌ Marks table error:", err.message);
+      });
+
+      // Initial inserts
+      db.run(`
+        INSERT OR IGNORE INTO faculty (name, email, password)
+        VALUES ('Seema Nandal', 'seemanandal@gmail.com', '12345')
+      `, (err) => {
+        if(err) console.error("❌ Faculty insert error:", err.message);
+      });
 
       db.run(`
-  INSERT OR IGNORE INTO faculty (name, email, password)
-  VALUES
-    ('Seema Nandal', 'seemanandal@gmail.com', '12345')
-`);
-
-      db.run(`
-  INSERT OR IGNORE INTO students (roll_no, name, email, password)
-  VALUES
-    ('101', 'Tushar', 'tushar@gmail.com', '12321')
-`);
+        INSERT OR IGNORE INTO students (roll_no, name, email, password)
+        VALUES ('101', 'Tushar', 'tushar@gmail.com', '12321')
+      `, (err) => {
+        if(err) console.error("❌ Student insert error:", err.message);
+      });
 
     });
   }
