@@ -57,7 +57,7 @@ const db = new sqlite3.Database("./database.db", (err) => {
       db.run(`
         CREATE TABLE IF NOT EXISTS marks (
           id INTEGER PRIMARY KEY AUTOINCREMENT,
-          rollNo TEXT,
+          roll_no TEXT,
           name TEXT,
           subject TEXT,
           marks INTEGER
