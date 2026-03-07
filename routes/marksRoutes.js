@@ -100,7 +100,7 @@ router.post("/add", (req, res) => {
   }
 
   const sql =
-    "INSERT INTO marks (rollNo, name, subject, marks) VALUES (?, ?, ?, ?)";
+    "INSERT INTO marks (roll_no, name, subject, marks) VALUES (?, ?, ?, ?)";
 
   db.run(sql, [roll_no, name, subject, marks], function (err) {
     if (err) {
@@ -131,7 +131,7 @@ router.get("/", (req, res) => {
 router.delete("/delete/:roll_no", (req, res) => {
   const { roll_no } = req.params;
 
-  const sql = "DELETE FROM marks WHERE rollNo = ?";
+  const sql = "DELETE FROM marks WHERE roll_no = ?";
 
   db.run(sql, [roll_no], function (err) {
     if (err) {
@@ -161,7 +161,7 @@ router.get("/student", (req, res) => {
   }
 
   const sql =
-    "SELECT roll_no, name, subject, marks FROM marks WHERE rollNo = ? AND name = ?";
+    "SELECT roll_no, name, subject, marks FROM marks WHERE roll_no = ? AND name = ?";
 
   db.all(sql, [roll_no, name], (err, rows) => {
     if (err) {
