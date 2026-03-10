@@ -24,77 +24,71 @@
 
 // export default db;
 
+// Postresql database Connection.js
 
-import sqlite3 from "sqlite3";
-import path from "path";
+import pkg from "pg";
+import dotenv from "dotenv";
 
-// Absolute path for database
-const dbPath = path.resolve("database/database.db");
+dotenv.config();
 
-const db = new sqlite3.Database(dbPath, (err) => {
-  if (err) {
-    console.error("❌ SQLite connection failed:", err.message);
-  } else {
-    console.log("✅ SQLite database connected at:", dbPath);
+const { Pool } = pkg;
 
-    // Ensure tables exist
-    db.serialize(() => {
-
-      // Faculty table
-      db.run(`
-        CREATE TABLE IF NOT EXISTS faculty (
-          id INTEGER PRIMARY KEY AUTOINCREMENT,
-          name TEXT,
-          email TEXT UNIQUE,
-          password TEXT
-        )
-      `, (err) => {
-        if(err) console.error("❌ Faculty table error:", err.message);
-      });
-
-      // Students table
-      db.run(`
-        CREATE TABLE IF NOT EXISTS students (
-          id INTEGER PRIMARY KEY AUTOINCREMENT,
-          roll_no TEXT UNIQUE,
-          name TEXT,
-          email TEXT,
-          password TEXT
-        )
-      `, (err) => {
-        if(err) console.error("❌ Students table error:", err.message);
-      });
-
-      // Marks table
-      db.run(`
-        CREATE TABLE IF NOT EXISTS marks (
-          id INTEGER PRIMARY KEY AUTOINCREMENT,
-          roll_no TEXT,
-          name TEXT,
-          subject TEXT,
-          marks INTEGER
-        )
-      `, (err) => {
-        if(err) console.error("❌ Marks table error:", err.message);
-      });
-
-      // Initial inserts
-      db.run(`
-        INSERT OR IGNORE INTO faculty (name, email, password)
-        VALUES ('Seema Nandal', 'seemanandal@gmail.com', '12345')
-      `, (err) => {
-        if(err) console.error("❌ Faculty insert error:", err.message);
-      });
-
-      db.run(`
-        INSERT OR IGNORE INTO students (roll_no, name, email, password)
-        VALUES ('101', 'Tushar', 'tushar@gmail.com', '12321')
-      `, (err) => {
-        if(err) console.error("❌ Student insert error:", err.message);
-      });
-
-    });
-  }
+const pool = new Pool({
+  connectionString: process.env.DATABASE_URL,
+  ssl: {
+    rejectUnauthorized: false,
+  },
 });
 
-export default db;
+pool.connect()
+  .then(() => {
+    console.log("✅ PostgreSQL connected successfully");
+
+    // Faculty table
+    pool.query(`
+      CREATE TABLE IF NOT EXISTS faculty (
+        id SERIAL PRIMARY KEY,
+        name VARCHAR(100),
+        email VARCHAR(100) UNIQUE,
+        password VARCHAR(100)
+      );
+    `);
+
+    // Students table
+    pool.query(`
+      CREATE TABLE IF NOT EXISTS students (
+        id SERIAL PRIMARY KEY,
+        roll_no VARCHAR(20) UNIQUE,
+        name VARCHAR(100),
+        email VARCHAR(100),
+        password VARCHAR(100)
+      );
+    `);
+
+    // Marks table
+    pool.query(`
+      CREATE TABLE IF NOT EXISTS marks (
+        id SERIAL PRIMARY KEY,
+        roll_no VARCHAR(20),
+        name VARCHAR(100),
+        subject VARCHAR(100),
+        marks INTEGER
+      );
+    `);
+    pool.query(`
+        INSERT INTO faculty (name, email, password)
+        VALUES ('Seema Nandal', 'seemanandal@gmail.com', '12345')
+        ON CONFLICT (email) DO NOTHING;
+`);
+
+    pool.query(`
+        INSERT INTO students (roll_no, name, email, password)
+        VALUES ('101', 'Tushar', 'tushar@gmail.com', '12321')
+        ON CONFLICT (roll_no) DO NOTHING;
+`);
+  })
+  .catch((err) => {
+    console.error("❌ PostgreSQL connection error:", err);
+  });
+
+export default pool;

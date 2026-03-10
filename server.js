@@ -23,4 +23,18 @@ app.get("/", (req, res) => {
   res.send("Backend is running...");
 });
 
+app.get("/check-tables", async (req, res) => {
+  try {
+    const result = await db.query(`
+      SELECT table_name 
+      FROM information_schema.tables 
+      WHERE table_schema='public'
+    `);
+    res.json(result.rows);
+  } catch (error) {
+    console.error(error);
+    res.status(500).send("Error checking tables");
+  }
+});
+
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
