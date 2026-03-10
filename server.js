@@ -6,8 +6,8 @@ import studentRoutes from "./routes/studentRoutes.js";
 import marksRoutes from "./routes/marksRoutes.js";
 import db from "./connection.js";
 
-
 dotenv.config();
+
 const app = express();
 const PORT = process.env.PORT || 5000;
 
@@ -26,15 +26,27 @@ app.get("/", (req, res) => {
 app.get("/check-tables", async (req, res) => {
   try {
     const result = await db.query(`
-      SELECT table_name 
-      FROM information_schema.tables 
+      SELECT table_name
+      FROM information_schema.tables
       WHERE table_schema='public'
     `);
     res.json(result.rows);
-  } catch (error) {
-    console.error(error);
+  } catch (err) {
+    console.error(err);
     res.status(500).send("Error checking tables");
   }
 });
 
-app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+app.get("/test-db", async (req, res) => {
+  try {
+    const result = await db.query("SELECT * FROM faculty");
+    res.json(result.rows);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: err.message });
+  }
+});
+
+app.listen(PORT, () => {
+  console.log(`Server running on port ${PORT}`);
+});

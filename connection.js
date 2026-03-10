@@ -1,31 +1,3 @@
-// import mysql from "mysql2";
-// import dotenv from "dotenv";
-// dotenv.config();
-
-// const db = mysql.createPool({
-//   host: process.env.MYSQLHOST.trim(),      // ✅ trim() se extra newline/space remove
-//   user: process.env.MYSQLUSER.trim(),
-//   password: process.env.MYSQLPASSWORD.trim(),
-//   database: process.env.MYSQLDATABASE.trim(),
-//   port: Number(process.env.MYSQLPORT),             // number hi rehne do
-//   waitForConnections: true,
-//   connectionLimit: 10,
-//   queueLimit: 0,
-// });
-
-// db.getConnection((err, connection) => {
-//   if (err) {
-//     console.error("❌ DB pool connection failed:", err);
-//   } else {
-//     console.log("✅ DB pool connected successfully");
-//     connection.release(); // ✅ pool me release karna hota hai
-//   }
-// });
-
-// export default db;
-
-// Postresql database Connection.js
-
 import pkg from "pg";
 import dotenv from "dotenv";
 
@@ -40,12 +12,11 @@ const pool = new Pool({
   },
 });
 
-pool.connect()
-  .then(() => {
-    console.log("✅ PostgreSQL connected successfully");
+async function initDB() {
+  try {
+    console.log("Connecting to PostgreSQL...");
 
-    // Faculty table
-    pool.query(`
+    await pool.query(`
       CREATE TABLE IF NOT EXISTS faculty (
         id SERIAL PRIMARY KEY,
         name VARCHAR(100),
@@ -54,8 +25,7 @@ pool.connect()
       );
     `);
 
-    // Students table
-    pool.query(`
+    await pool.query(`
       CREATE TABLE IF NOT EXISTS students (
         id SERIAL PRIMARY KEY,
         roll_no VARCHAR(20) UNIQUE,
@@ -65,8 +35,7 @@ pool.connect()
       );
     `);
 
-    // Marks table
-    pool.query(`
+    await pool.query(`
       CREATE TABLE IF NOT EXISTS marks (
         id SERIAL PRIMARY KEY,
         roll_no VARCHAR(20),
@@ -75,20 +44,26 @@ pool.connect()
         marks INTEGER
       );
     `);
-    pool.query(`
-        INSERT INTO faculty (name, email, password)
-        VALUES ('Seema Nandal', 'seemanandal@gmail.com', '12345')
-        ON CONFLICT (email) DO NOTHING;
-`);
 
-    pool.query(`
-        INSERT INTO students (roll_no, name, email, password)
-        VALUES ('101', 'Tushar', 'tushar@gmail.com', '12321')
-        ON CONFLICT (roll_no) DO NOTHING;
-`);
-  })
-  .catch((err) => {
-    console.error("❌ PostgreSQL connection error:", err);
-  });
+    await pool.query(`
+      INSERT INTO faculty (name,email,password)
+      VALUES ('Seema Nandal','seemanandal@gmail.com','12345')
+      ON CONFLICT (email) DO NOTHING
+    `);
+
+    await pool.query(`
+      INSERT INTO students (roll_no,name,email,password)
+      VALUES ('101','Tushar','tushar@gmail.com','12321')
+      ON CONFLICT (roll_no) DO NOTHING
+    `);
+
+    console.log("✅ PostgreSQL connected and tables ready");
+
+  } catch (err) {
+    console.error("❌ Database error:", err);
+  }
+}
+
+initDB();
 
 export default pool;
