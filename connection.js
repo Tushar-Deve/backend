@@ -47,7 +47,7 @@ async function initDB() {
 
     await pool.query(`
       INSERT INTO faculty (name,email,password)
-      VALUES ('Seema Nandal','seemanandal@gmail.com','09032002')
+      VALUES ('Seema Nandal','seemanandal@gmail.com','12345')
       ON CONFLICT (email) DO NOTHING
     `);
 
