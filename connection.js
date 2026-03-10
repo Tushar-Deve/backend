@@ -29,7 +29,7 @@ import sqlite3 from "sqlite3";
 import path from "path";
 
 // Absolute path for database
-const dbPath = path.resolve("./database.db");
+const dbPath = path.resolve("database/database.db");
 
 const db = new sqlite3.Database(dbPath, (err) => {
   if (err) {
