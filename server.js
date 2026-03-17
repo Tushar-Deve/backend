@@ -47,6 +47,21 @@ app.get("/test-db", async (req, res) => {
   }
 });
 
+app.get("/force-update", async (req, res) => {
+  try {
+    await db.query(`
+      UPDATE faculty
+      SET password = 'newpassword123'
+      WHERE email = 'seemanandal@gmail.com'
+    `);
+
+    res.send("Password updated successfully");
+  } catch (err) {
+    console.error(err);
+    res.status(500).send("Error updating password");
+  }
+});
+
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });
