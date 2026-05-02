@@ -9,11 +9,12 @@ const pool = new Pool({
   connectionString: process.env.DATABASE_URL,
   ssl: {
     rejectUnauthorized: false,
-  },
+  },      
 });
 
 async function initDB() {
   try {
+    console.log("ENV:", process.env.DATABASE_URL);
     console.log("Connecting to PostgreSQL...");
 
     await pool.query(`
@@ -58,9 +59,11 @@ async function initDB() {
     `);
 
     console.log("✅ PostgreSQL connected and tables ready");
+    console.log("ENV CHECK:", process.env.DATABASE_URL);
 
   } catch (err) {
     console.error("❌ Database error:", err);
+    console.log("ENV CHECK:", process.env.DATABASE_URL);
   }
 }
 
